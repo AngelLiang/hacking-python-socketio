@@ -92,12 +92,12 @@ class BaseManager(object):
             self.rooms[namespace] = {}
         if room not in self.rooms[namespace]:
             self.rooms[namespace][room] = {}
-        self.rooms[namespace][room][sid] = True
+        self.rooms[namespace][room][sid] = True  # 把sid加入该namespace的room
 
     def leave_room(self, sid, namespace, room):
         """Remove a client from a room."""
         try:
-            del self.rooms[namespace][room][sid]
+            del self.rooms[namespace][room][sid]  # 从namespace的room移除sid
             if len(self.rooms[namespace][room]) == 0:
                 del self.rooms[namespace][room]
                 if len(self.rooms[namespace]) == 0:
@@ -136,6 +136,7 @@ class BaseManager(object):
                     id = self._generate_ack_id(sid, namespace, callback)
                 else:
                     id = None
+                # 把消息发送给相关sid的客户端
                 self.server._emit_internal(sid, event, data, namespace, id)
 
     def trigger_callback(self, sid, namespace, id, data):
