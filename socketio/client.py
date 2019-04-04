@@ -95,10 +95,11 @@ class Client(object):
         self.connection_namespaces = None
         self.socketio_path = None
 
+        # python-socketio 主要是添加了下面这些功能
         self.namespaces = []
-        self.handlers = {}
-        self.namespace_handlers = {}
-        self.callbacks = {}
+        self.handlers = {}              # 处理程序集合， handlers[namespace][event]
+        self.namespace_handlers = {}    # 作用域处理程序集合， namespace_handlers[namespace]
+        self.callbacks = {}             # 回调函数集合， callbacks[namespace]
         self._binary_packet = None
         self._reconnect_task = None
 
@@ -143,12 +144,12 @@ class Client(object):
         def set_handler(handler):
             if namespace not in self.handlers:
                 self.handlers[namespace] = {}
-            self.handlers[namespace][event] = handler
+            self.handlers[namespace][event] = handler   # namespace默认是None
             return handler
 
         if handler is None:
-            return set_handler
-        set_handler(handler)
+            return set_handler  # 返回包装器，所以可以使用 @sio.on('connect')
+        set_handler(handler)    # 普通的函数注册 sio.on('message', message_handler)
 
     def register_namespace(self, namespace_handler):
         """Register a namespace handler object.
